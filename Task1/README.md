@@ -1,42 +1,17 @@
-# Task 1 — Building a Balatro-Like Run
+Refleksi
 
-A 3-round run loop in C++17 that separates the **invariant** (phase order) from the **mutable** parts (input, scoring, reward, shop).
+1. Apa struktur invarian dalam program Anda?
+Invarian adalah urutan fase tetap yang dikontrol oleh `RunSession`: menghasilkan masukan, menghitung skor dasar, menghitung hadiah, memperbarui uang, fase toko, maju ke ronde berikutnya, yang diulang persis selama 3 ronde. `RunSession` menentukan *kapan* setiap langkah terjadi, tetapi bebas dari penentuan *bagaimana* hal itu dilakukan. Selama urutan ini tetap utuh, *run* akan selalu berperilaku secara dapat diprediksi.
 
-## Build & Run
+2. Bagian mana saja yang bersifat mutabel?
 
-```bash
-g++ -std=c++17 -Wall -Wextra -o task1 main.cpp
-./task1
-```
+`IInputGenerator` (`FixedInputGenerator`, `RandomInputGenerator`), `IScoringRule` (`SimpleScoringRule`), `IRewardRule` (`DirectRewardRule`, `BonusRewardRule`), serta isi dari `ShopSystem`. Masing-masing dapat ditukar atau diedit tanpa menyentuh loop, itulah sebabnya bagian-bagian ini aman untuk diubah.
 
-## Structure
+3. Saat Anda mengganti InputGenerator, mengapa RunSession bebas dari perubahan?
 
-| File | Role |
-|---|---|
-| `RunSession.h` | Invariant: controls the loop and phase order only |
-| `IInputGenerator.h`, `FixedInputGenerator.h`, `RandomInputGenerator.h` | Input generation (mutable) |
-| `IScoringRule.h`, `SimpleScoringRule.h` | Base score (mutable) |
-| `IRewardRule.h`, `DirectRewardRule.h`, `BonusRewardRule.h` | Reward (mutable) |
-| `ShopSystem.h` | Prints a shop offer (mutable) |
-| `main.cpp` | Wiring only, no game logic |
+`RunSession` hanya bergantung pada antarmuka abstrak `IInputGenerator` dan hanya memanggil fungsi `generate()`. Kelas ini bebas dari pengetahuan tentang kelas konkret apa yang berada di baliknya. `main()` membuat objek `RandomInputGenerator` dan menyuntikannya ke dalam `RunSession`, sehingga hanya perakitannya saja yang berubah, bukan loop-nya. Perubahan hadiah bekerja dengan cara yang sama melalui `IRewardRule`.
 
-## Modifications
+4. Apa yang akan terjadi jika logika penilaian ditempatkan di dalam RunSession?
 
-1. **Modification 1:** `FixedInputGenerator` replaced by `RandomInputGenerator` (dice 1–6).
-2. **Modification 2:** `DirectRewardRule` (reward = base score) replaced by `BonusRewardRule` (reward = base score + 2).
-
-`RunSession` was not modified in either change; only the wiring in `main()` changed.
-
-## Reflection
-
-**1. What is the invariant structure in your program?**
-The invariant is the fixed phase order controlled by `RunSession`: generate input, compute base score, compute reward, update money, shop phase, advance round, repeated for exactly 3 rounds. `RunSession` decides *when* each step happens, never *how* it is done. As long as this order stays untouched, the run always behaves predictably.
-
-**2. Which parts are mutable?**
-`IInputGenerator` (`FixedInputGenerator`, `RandomInputGenerator`), `IScoringRule` (`SimpleScoringRule`), `IRewardRule` (`DirectRewardRule`, `BonusRewardRule`), and the content of `ShopSystem`. Each can be swapped or edited without touching the loop, which is why they are safe to change.
-
-**3. When you replaced the InputGenerator, why didn't RunSession change?**
-`RunSession` depends only on the abstract interface `IInputGenerator` and simply calls `generate()`. It does not know which concrete class is behind it. `main()` creates a `RandomInputGenerator` and injects it into `RunSession`, so only the wiring changes, not the loop. The reward change works the same way through `IRewardRule`.
-
-**4. What would happen if scoring logic was placed inside RunSession?**
-`RunSession` would have two responsibilities: ordering phases and calculating scores. Every scoring change would require editing `RunSession`, which risks breaking the phase order by accident. Scoring rules could no longer be swapped without touching the loop, testing would be harder, and the invariant would no longer be protected because the stable part and the changing part would be mixed together.
+`RunSession` akan memiliki dua tanggung jawab: 
+Mengurutkan fase dan menghitung skor. Setiap perubahan penilaian akan mengharuskan penyuntingan pada `RunSession`, yang berisiko merusak urutan fase secara tidak sengaja. Aturan penilaian tidak lagi dapat ditukar tanpa menyentuh loop, pengujian akan menjadi lebih sulit, dan invarian tidak akan lagi terlindungi karena bagian yang stabil dan bagian yang berubah tercampur menjadi satu.

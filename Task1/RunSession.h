@@ -8,10 +8,6 @@
 #include "IRewardRule.h"
 #include "ShopSystem.h"
 
-// INVARIANT: RunSession hanya mengendalikan game loop dan urutan fase.
-// Tidak ada logika input generation, scoring, atau reward di sini.
-// Semua pekerjaan didelegasikan ke IInputGenerator, IScoringRule,
-// IRewardRule, dan ShopSystem.
 class RunSession {
 public:
     static constexpr int kTotalRounds = 3;

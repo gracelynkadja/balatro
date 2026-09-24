@@ -2,8 +2,6 @@
 #include <random>
 #include "IInputGenerator.h"
 
-// Modification 1: pengganti FixedInputGenerator.
-// Menghasilkan input acak antara 1 sampai 6 (seperti dadu).
 class RandomInputGenerator : public IInputGenerator {
 public:
     RandomInputGenerator()
