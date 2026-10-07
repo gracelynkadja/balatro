@@ -8,6 +8,10 @@
 #include "IRewardRule.h"
 #include "ShopSystem.h"
 
+// INVARIANT: RunSession hanya mengendalikan game loop dan urutan fase.
+// Tidak ada logika input generation, scoring, atau reward di sini.
+// Semua pekerjaan didelegasikan ke IInputGenerator, IScoringRule,
+// IRewardRule, dan ShopSystem.
 class RunSession {
 public:
     static constexpr int kTotalRounds = 3;
@@ -35,13 +39,13 @@ public:
             int baseScore = scoringRule_->computeBaseScore(input);
             std::cout << "[SCORE] base score: " << baseScore << "\n";
 
-            // 3. Compute reward
+            // 3. Compute reward (jumlah HP yang didapat)
             int gain = rewardRule_->computeReward(baseScore);
 
-            // 4. Update money (satu-satunya tempat uang berubah)
-            money_ += gain;
-            std::cout << "[REWARD] gain: " << gain
-                      << " | money: " << money_ << "\n";
+            // 4. Update HP (satu-satunya tempat HP berubah)
+            hp_ += gain;
+            std::cout << "[REWARD] HP gain: " << gain
+                      << " | HP: " << hp_ << "\n";
 
             // 5. Shop phase
             shop_.showOffer();
@@ -55,7 +59,7 @@ public:
         }
 
         std::cout << "\n=== RUN END ===\n";
-        std::cout << "Final money: " << money_ << "\n";
+        std::cout << "Final HP: " << hp_ << "\n";
     }
 
 private:
@@ -63,5 +67,5 @@ private:
     std::unique_ptr<IScoringRule> scoringRule_;
     std::unique_ptr<IRewardRule> rewardRule_;
     ShopSystem shop_;
-    int money_ = 0;
+    int hp_ = 0;
 };

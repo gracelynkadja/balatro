@@ -1,6 +1,8 @@
 #pragma once
 #include "IRewardRule.h"
 
+// Modification 2: HP yang didapat TIDAK sama dengan baseScore lagi.
+// HP gain = baseScore + 2
 class BonusRewardRule : public IRewardRule {
 public:
     int computeReward(int baseScore) const override {
