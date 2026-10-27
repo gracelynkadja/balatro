@@ -2,6 +2,7 @@
 #include "ScoringRule.h"
 
 int ScoringRule::scoreHand(const ChosenHand& chosen) {
+    if (!chosen.isValid()) return 0;   // tidak ada kartu valid -> skor 0
     HandType type = checker.check(chosen);
     // {chips, mult} per jenis hand
     static const int chips[] = {5, 10, 20, 30, 30, 35, 40, 60, 100};

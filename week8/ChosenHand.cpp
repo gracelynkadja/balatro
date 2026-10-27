@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <iostream>
+#include <string>
 #include "ChosenHand.h"
 
 ChosenHand::ChosenHand(const Hand& source) : source(source) {}
@@ -38,7 +39,17 @@ std::vector<Card> ChosenHand::getCards() const {
     return result;
 }
 
+static std::string rankName(int rank) {
+    switch (rank) {
+        case 11: return "J";
+        case 12: return "Q";
+        case 13: return "K";
+        case 14: return "A";
+        default: return std::to_string(rank);
+    }
+}
+
 void ChosenHand::print() const {
-    for (const Card& c : getCards()) std::cout << c.rank << c.suit << " ";
+    for (const Card& c : getCards()) std::cout << rankName(c.rank) << c.suit << " ";
     std::cout << "\n";
 }

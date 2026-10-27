@@ -17,6 +17,10 @@ ChosenHand HandPlayer::chooseHand(const Hand& hand) {
 }
 
 void HandPlayer::playHand(const ChosenHand& chosen) {
+    if (!chosen.isValid()) {
+        std::cout << "Invalid hand: pilih 1-" << ChosenHand::MAX_CARDS << " kartu.\n";
+        return;
+    }
     std::cout << "Playing hand: ";
     chosen.print();
 }

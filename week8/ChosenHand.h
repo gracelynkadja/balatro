@@ -7,7 +7,7 @@ class ChosenHand {
 public:
     static const int MAX_CARDS = 5;
 
-    explicit ChosenHand(const Hand& source);
+    explicit ChosenHand(const Hand& source);   // menyalin hand sumber
 
     bool selectCard(int index);     // pilih kartu dari hand; false jika gagal
     bool deselectCard(int index);   // batalkan pilihan
@@ -20,6 +20,6 @@ public:
     void print() const;
 
 private:
-    const Hand& source;
+    Hand source;   // salinan Hand (bukan referensi) agar aman dari dangling reference
     std::vector<int> selectedIndices;
 };
